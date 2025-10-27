@@ -4,9 +4,328 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Algorithm Complexity Analyzer</title>
-    <meta name="description" content="Analyze time and space complexity of your algorithms">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .input-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .input-header label {
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .language-selector select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-bg);
+            font-size: 0.9rem;
+        }
+
+        #inputCode {
+            width: 100%;
+            height: 300px;
+            padding: 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+
+        #inputCode:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary, .btn-outline {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-color);
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .btn-icon:hover {
+            background: var(--border-color);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .result-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .complexity-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .complexity-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .complexity-card h3 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .complexity-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .complexity-explanation {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .detailed-analysis {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .info-section details {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .info-section summary {
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .info-section ul {
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .info-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section {
+                padding: 1.5rem;
+            }
+            
+            .complexity-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-actions {
+                flex-direction: column;
+            }
+            
+            .input-actions button {
+                width: 100%;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Success/Error states */
+        .success { border-left-color: var(--success-color); }
+        .warning { border-left-color: var(--warning-color); }
+        .error { border-left-color: var(--error-color); }
+
+        /* Message styles */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            color: white;
+            border-radius: 6px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message-success {
+            background: var(--success-color);
+        }
+
+        .message-error {
+            background: var(--error-color);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -84,6 +403,286 @@ for i in range(n):
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        class ComplexityAnalyzer {
+            constructor() {
+                this.initializeEventListeners();
+                this.examples = this.getExamples();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('calculateBtn').addEventListener('click', () => this.calculateComplexity());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearInput());
+                document.getElementById('exampleBtn').addEventListener('click', () => this.loadExample());
+                document.getElementById('copyResult').addEventListener('click', () => this.copyResults());
+                
+                // Enter key to calculate (with Ctrl/Cmd)
+                document.getElementById('inputCode').addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        this.calculateComplexity();
+                    }
+                });
+            }
+
+            getExamples() {
+                return {
+                    python: `def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1`,
+
+                    javascript: `function fibonacci(n) {
+    if (n <= 1) return n;
+    
+    let prev = 0, curr = 1;
+    for (let i = 2; i <= n; i++) {
+        let next = prev + curr;
+        prev = curr;
+        curr = next;
+    }
+    return curr;
+}`,
+
+                    pseudocode: `for i = 0 to n-1:
+    for j = 0 to n-1:
+        print(i, j)
+        
+for k = 0 to n-1:
+    print(k)`
+                };
+            }
+
+            async calculateComplexity() {
+                const code = document.getElementById('inputCode').value.trim();
+                const language = document.getElementById('languageSelect').value;
+                
+                if (!code) {
+                    this.showError('Please enter some code to analyze.');
+                    return;
+                }
+
+                this.setLoadingState(true);
+                
+                // Simulate analysis (in a real app, this would be more sophisticated)
+                await this.simulateAnalysis();
+                
+                const analysis = this.analyzeCode(code, language);
+                this.displayResults(analysis);
+                this.setLoadingState(false);
+            }
+
+            analyzeCode(code, language) {
+                // Basic pattern matching for complexity analysis
+                // In a real implementation, this would use proper parsing
+                const lines = code.split('\n');
+                let maxNestedLoops = 0;
+                let currentNesting = 0;
+                let hasRecursion = false;
+                let dataStructures = new Set();
+                
+                // Simple pattern detection
+                lines.forEach(line => {
+                    const trimmed = line.trim().toLowerCase();
+                    
+                    // Detect loops
+                    if (trimmed.match(/(for|while|do\s*\{)/)) {
+                        currentNesting++;
+                        maxNestedLoops = Math.max(maxNestedLoops, currentNesting);
+                    } else if (trimmed.match(/\}/) || trimmed.match(/end/)) {
+                        currentNesting = Math.max(0, currentNesting - 1);
+                    }
+                    
+                    // Detect recursion
+                    if (trimmed.match(/function|def|func/) && trimmed.match(/\(.*\)/)) {
+                        const functionName = trimmed.match(/(function|def|func)\s+(\w+)/)?.[2];
+                        if (functionName && code.includes(functionName + '(')) {
+                            hasRecursion = true;
+                        }
+                    }
+                    
+                    // Detect data structures
+                    if (trimmed.match(/array|list|\[\]/)) dataStructures.add('array');
+                    if (trimmed.match(/hash|map|dict|object/)) dataStructures.add('hash');
+                    if (trimmed.match(/tree|node|graph/)) dataStructures.add('tree');
+                });
+
+                return this.determineComplexity(maxNestedLoops, hasRecursion, dataStructures);
+            }
+
+            determineComplexity(nestedLoops, hasRecursion, dataStructures) {
+                let timeComplexity = 'O(1)';
+                let spaceComplexity = 'O(1)';
+                let timeExplanation = 'Constant time - no loops or recursion detected.';
+                let spaceExplanation = 'Constant space - no significant data structures detected.';
+
+                // Time complexity determination
+                if (hasRecursion) {
+                    timeComplexity = 'O(2^n)';
+                    timeExplanation = 'Exponential time - recursive calls detected (may vary based on implementation).';
+                } else if (nestedLoops >= 3) {
+                    timeComplexity = 'O(n³)';
+                    timeExplanation = `Cubic time - ${nestedLoops} nested loops detected.`;
+                } else if (nestedLoops === 2) {
+                    timeComplexity = 'O(n²)';
+                    timeExplanation = 'Quadratic time - 2 nested loops detected.';
+                } else if (nestedLoops === 1) {
+                    timeComplexity = 'O(n)';
+                    timeExplanation = 'Linear time - single loop detected.';
+                }
+
+                // Space complexity determination
+                if (dataStructures.has('tree') || dataStructures.has('graph')) {
+                    spaceComplexity = 'O(n)';
+                    spaceExplanation = 'Linear space - tree/graph data structure detected.';
+                } else if (dataStructures.has('hash')) {
+                    spaceComplexity = 'O(n)';
+                    spaceExplanation = 'Linear space - hash map/dictionary detected.';
+                } else if (dataStructures.has('array')) {
+                    spaceComplexity = 'O(n)';
+                    spaceExplanation = 'Linear space - array/list detected.';
+                }
+
+                return {
+                    timeComplexity,
+                    spaceComplexity,
+                    timeExplanation,
+                    spaceExplanation,
+                    detailed: this.generateDetailedAnalysis(nestedLoops, hasRecursion, dataStructures)
+                };
+            }
+
+            generateDetailedAnalysis(nestedLoops, hasRecursion, dataStructures) {
+                let analysis = 'Analysis Details:\n\n';
+                
+                if (nestedLoops > 0) {
+                    analysis += `• Found ${nestedLoops} level${nestedLoops > 1 ? 's' : ''} of nested loops\n`;
+                }
+                
+                if (hasRecursion) {
+                    analysis += '• Recursive function calls detected\n';
+                }
+                
+                if (dataStructures.size > 0) {
+                    analysis += `• Data structures used: ${Array.from(dataStructures).join(', ')}\n`;
+                }
+                
+                analysis += '\nNote: This is an automated analysis. For complex algorithms, manual review is recommended.';
+                
+                return analysis;
+            }
+
+            displayResults(analysis) {
+                const resultSection = document.getElementById('result');
+                resultSection.classList.remove('hidden');
+
+                document.getElementById('timeComplexity').textContent = analysis.timeComplexity;
+                document.getElementById('spaceComplexity').textContent = analysis.spaceComplexity;
+                document.getElementById('timeExplanation').textContent = analysis.timeExplanation;
+                document.getElementById('spaceExplanation').textContent = analysis.spaceExplanation;
+                document.getElementById('detailedAnalysis').textContent = analysis.detailed;
+
+                // Add appropriate styling based on complexity
+                this.styleComplexityCards(analysis);
+            }
+
+            styleComplexityCards(analysis) {
+                const timeCard = document.querySelector('#timeComplexity').closest('.complexity-card');
+                const spaceCard = document.querySelector('#spaceComplexity').closest('.complexity-card');
+
+                // Reset classes
+                [timeCard, spaceCard].forEach(card => {
+                    card.className = 'complexity-card';
+                });
+
+                // Style based on complexity
+                const timeComplexity = analysis.timeComplexity;
+                if (timeComplexity.includes('O(2^n)') || timeComplexity.includes('O(n!)')) {
+                    timeCard.classList.add('error');
+                } else if (timeComplexity.includes('O(n³)') || timeComplexity.includes('O(n²)')) {
+                    timeCard.classList.add('warning');
+                } else {
+                    timeCard.classList.add('success');
+                }
+
+                spaceCard.classList.add('success');
+            }
+
+            setLoadingState(loading) {
+                const button = document.getElementById('calculateBtn');
+                const spinner = button.querySelector('.spinner');
+                const buttonText = button.querySelector('.btn-text');
+                
+                if (loading) {
+                    button.disabled = true;
+                    spinner.classList.remove('hidden');
+                    buttonText.textContent = 'Analyzing...';
+                    document.body.classList.add('loading');
+                } else {
+                    button.disabled = false;
+                    spinner.classList.add('hidden');
+                    buttonText.textContent = 'Analyze Complexity';
+                    document.body.classList.remove('loading');
+                }
+            }
+
+            clearInput() {
+                document.getElementById('inputCode').value = '';
+                document.getElementById('result').classList.add('hidden');
+            }
+
+            loadExample() {
+                const language = document.getElementById('languageSelect').value;
+                document.getElementById('inputCode').value = this.examples[language] || this.examples.pseudocode;
+            }
+
+            async copyResults() {
+                const timeComplexity = document.getElementById('timeComplexity').textContent;
+                const spaceComplexity = document.getElementById('spaceComplexity').textContent;
+                const detailed = document.getElementById('detailedAnalysis').textContent;
+                
+                const textToCopy = `Time Complexity: ${timeComplexity}\nSpace Complexity: ${spaceComplexity}\n\n${detailed}`;
+                
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    this.showTemporaryMessage('Results copied to clipboard!', 'success');
+                } catch (err) {
+                    this.showTemporaryMessage('Failed to copy results', 'error');
+                }
+            }
+
+            showTemporaryMessage(message, type) {
+                const messageEl = document.createElement('div');
+                messageEl.textContent = message;
+                messageEl.className = `message message-${type}`;
+                
+                document.body.appendChild(messageEl);
+                
+                setTimeout(() => {
+                    messageEl.remove();
+                }, 3000);
+            }
+
+            showError(message) {
+                this.showTemporaryMessage(message, 'error');
+            }
+
+            async simulateAnalysis() {
+                // Simulate processing time
+                return new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ComplexityAnalyzer();
+        });
+    </script>
 </body>
 </html>
