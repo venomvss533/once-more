@@ -3,17 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time and Space Complexity Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Algorithm Complexity Analyzer</title>
+    <meta name="description" content="Analyze time and space complexity of your algorithms">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Time and Space Complexity Calculator</h1>
-        <textarea id="inputCode" placeholder="Type/paste your code here..."></textarea>
-        <button onclick="calculateComplexity()">Calculate Complexity</button>
-        <div id="result"></div>
+        <header class="header">
+            <h1>Algorithm Complexity Analyzer</h1>
+            <p class="subtitle">Analyze time and space complexity of your code</p>
+        </header>
+
+        <main class="main-content">
+            <div class="input-section">
+                <div class="input-header">
+                    <label for="inputCode">Your Code</label>
+                    <div class="language-selector">
+                        <select id="languageSelect">
+                            <option value="pseudocode">Pseudocode</option>
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                    </div>
+                </div>
+                <textarea 
+                    id="inputCode" 
+                    placeholder="Enter your algorithm code here...
+Example:
+for i in range(n):
+    for j in range(m):
+        print(i, j)"
+                    spellcheck="false"
+                ></textarea>
+                <div class="input-actions">
+                    <button id="calculateBtn" class="btn-primary">
+                        <span class="btn-text">Analyze Complexity</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                    <button id="clearBtn" class="btn-secondary">Clear</button>
+                    <button id="exampleBtn" class="btn-outline">Load Example</button>
+                </div>
+            </div>
+
+            <div id="result" class="result-section hidden">
+                <div class="result-header">
+                    <h2>Analysis Results</h2>
+                    <button id="copyResult" class="btn-icon" title="Copy results">
+                        📋
+                    </button>
+                </div>
+                <div class="complexity-cards">
+                    <div class="complexity-card">
+                        <h3>Time Complexity</h3>
+                        <div id="timeComplexity" class="complexity-value">-</div>
+                        <div id="timeExplanation" class="complexity-explanation"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <h3>Space Complexity</h3>
+                        <div id="spaceComplexity" class="complexity-value">-</div>
+                        <div id="spaceExplanation" class="complexity-explanation"></div>
+                    </div>
+                </div>
+                <div id="detailedAnalysis" class="detailed-analysis"></div>
+            </div>
+
+            <div class="info-section">
+                <details>
+                    <summary>How to use this tool</summary>
+                    <ul>
+                        <li>Write your algorithm in pseudocode or select a programming language</li>
+                        <li>Use common loop structures (for, while) and operations</li>
+                        <li>The analyzer will detect patterns and calculate Big O notation</li>
+                        <li>Results include both time and space complexity analysis</li>
+                    </ul>
+                </details>
+            </div>
+        </main>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
